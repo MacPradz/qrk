@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane fx:id="menuScreen" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <children>
+      <Button fx:id="goToChangeCurveNamesBtn" layoutX="237.0" layoutY="88.0" mnemonicParsing="false" onAction="#goToChangeCurveNames" text="Change curve names" />
+      <Button fx:id="moveDataBtn" layoutX="114.0" layoutY="121.0" mnemonicParsing="false" onAction="#goToMoveDataBtn" text="Moving data from one curve to another without creating duplicates" />
+      <Label layoutX="168.0" layoutY="34.0" text="SQL QUERY GENERATOR">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

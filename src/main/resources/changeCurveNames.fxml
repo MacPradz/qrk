@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="anchorPaneChangeCurveNames" prefHeight="650.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <children>
+      <Button fx:id="generateQueryBtn" layoutX="83.0" layoutY="390.0" mnemonicParsing="false" onAction="#generateQuery" text="generate query" />
+      <TextField fx:id="loadsetIdTextField" layoutX="87.0" layoutY="60.0" />
+      <TextArea fx:id="outputTextArea" layoutX="14.0" layoutY="431.0" prefHeight="208.0" prefWidth="622.0" promptText="OUTPUT" />
+      <Label layoutX="27.0" layoutY="64.0" text="loadset ID" />
+      <Label fx:id="title" layoutX="194.0" layoutY="8.0" prefHeight="40.0" prefWidth="263.0" text="change curve names" textAlignment="CENTER" underline="true" AnchorPane.bottomAnchor="602.0">
+         <font>
+            <Font size="28.0" />
+         </font>
+      </Label>
+      <Label layoutX="283.0" layoutY="383.0" text="output">
+         <font>
+            <Font size="20.0" />
+         </font></Label>
+      <Button fx:id="copyToClipboardBtn" layoutX="452.0" layoutY="390.0" mnemonicParsing="false" onAction="#copyToClipboard" text="Copy output to clipboard" />
+      <TextArea fx:id="inputTextArea" layoutX="14.0" layoutY="93.0" prefHeight="282.0" prefWidth="622.0" promptText="part to be replaced , new part , where curve like&#10;&#13;ctr.long , LgT.LNG , %ctr.long%&#10;&#13;ctr.short , ShT.LNG , %ctr.short%" />
+      <Label layoutX="256.0" layoutY="58.0" prefHeight="30.0" prefWidth="323.0" text="Insert comma separated input data:" wrapText="true">
+         <font>
+            <Font size="20.0" />
+         </font></Label>
+      <Button fx:id="goToMenuBtn" layoutX="527.0" layoutY="16.0" mnemonicParsing="false" onAction="#goToMenu" text="Back to menu" />
+   </children>
+</AnchorPane>
