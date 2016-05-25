@@ -15,9 +15,10 @@ import java.util.regex.Pattern;
 public class UpdateInfoInApex{
     private static final String QUERY = "exec dw.pkg_curve_maintenance.update_curve_info(%CURVE_TO_UPDATE%);\n";
 
-    public static String getQuery(String input) throws IOException {
+    public static String getQuery(Input input) throws IOException {
+        String csvString = input.getCsv();
         StringBuilder queryBuilder = new StringBuilder("");
-        CSVParser csv = AdjustedCSVParser.getCsv(input);
+        CSVParser csv = AdjustedCSVParser.getCsv(csvString);
         List<CSVRecord> records = csv.getRecords();
         for ( CSVRecord record : records ) {
             for ( String curveToBeUpdated : record ) {

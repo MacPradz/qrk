@@ -18,9 +18,10 @@ public class MoveDataNoDuplicates {
                     "from curve_data where curve_id = %CURVE_FROM%  --where from\n" +
                     "and (forecast_date, value_date) not in (select  forecast_date, value_date from curve_data where curve_id = %CURVE_TO%);\n\n";
 
-    public static String getQuery(String input) throws IOException {
+    public static String getQuery(Input input) throws IOException {
+        String csvString = input.getCsv();
         StringBuilder queryBuilder = new StringBuilder("");
-        CSVParser csv = AdjustedCSVParser.getCsv(input);
+        CSVParser csv = AdjustedCSVParser.getCsv(csvString);
         List<CSVRecord> records = csv.getRecords();
         List<String> curvesToBeUpdated = new LinkedList<>();
         for ( CSVRecord record : records ) {

@@ -13,6 +13,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.stage.Stage;
 import logic.ChangeCurveNames;
+import logic.Input;
 import logic.MoveDataNoDuplicates;
 import logic.UpdateInfoInApex;
 
@@ -20,51 +21,46 @@ import java.io.IOException;
 import java.util.Iterator;
 
 public class Controller {
-    public TextField loadsetIdTextField;
-    public TextArea outputTextArea;
-    public TextArea inputTextArea;
 
     public void generateQuery(ActionEvent actionEvent) throws IOException {
         Button button = (Button) actionEvent.getSource();
         Parent parent = button.getParent();
         String anchorId = parent.getId();
 
-
         if ( anchorId.equals("anchorPaneChangeCurveNames") ){
-            String loadsetIdString = loadsetIdTextField.getText().trim();
-            if ( !validateLoadsetId(loadsetIdString) ) {
-                outputTextArea.setText("loadset id mustn't contain anything except digits");
-                return;
-            }
-            String input = inputTextArea.getText();
-            System.out.println(input);
-            System.out.println();
-            boolean b = input.matches(".*?,.*?,.*");
-            System.out.println(b+"sd");
-            String output = ChangeCurveNames.getQuery(loadsetIdString, input);
+            TextField loadsetIdText = getTextField(actionEvent, "loadsetIdTextField");
 
-            outputTextArea.setText(output);
+            String loadsetIdString = loadsetIdText.getText().trim();
+            TextArea outputArea = getTextArea(actionEvent, "outputTextArea");
+
+            TextArea inputArea = getTextArea(actionEvent, "inputTextArea");
+            String inputCsv = inputArea.getText();
+            Input input = new Input(inputCsv);
+            input.setLoadsetId(loadsetIdString);
+            String output = ChangeCurveNames.getQuery(input);
+
+            outputArea.setText(output);
+
+
         }else if (  anchorId.equals("anchorPaneMoveDataNoDuplicates") ){
-            TextArea inputArea = getElementById(actionEvent, "inputTextArea");
-            String input = inputArea.getText();
+            TextArea inputArea = getTextArea(actionEvent, "inputTextArea");
+            String inputCsv = inputArea.getText();
+            Input input = new Input(inputCsv);
             String output = MoveDataNoDuplicates.getQuery(input);
 
-            TextArea outputArea = getElementById(actionEvent, "outputTextArea");
+            TextArea outputArea = getTextArea(actionEvent, "outputTextArea");
             outputArea.setText(output);
 
 
         }else if (  anchorId.equals("anchorPaneUpdateInfoInApex") ){
-            TextArea inputArea = getElementById(actionEvent, "inputTextArea");
-            String input = inputArea.getText();
+            TextArea inputArea = getTextArea(actionEvent, "inputTextArea");
+            String inputCsv = inputArea.getText();
+            Input input = new Input(inputCsv);
             String output = UpdateInfoInApex.getQuery(input);
 
-            TextArea outputArea = getElementById(actionEvent, "outputTextArea");
+            TextArea outputArea = getTextArea(actionEvent, "outputTextArea");
             outputArea.setText(output);
         }
-    }
-
-    private boolean validateLoadsetId(String loadsetId) {
-        return loadsetId.matches("\\d+");
     }
 
     public void copyToClipboard(ActionEvent actionEvent) {
@@ -115,7 +111,7 @@ public class Controller {
         stage.show();
     }
 
-    public TextArea getElementById(ActionEvent actionEvent, String searchedId) {
+    private Node getNodeById(ActionEvent actionEvent, String searchedId) {
         Button button = (Button) actionEvent.getSource();
         Parent parent = button.getParent();
         ObservableList<Node> childrenUnmodifiable = parent.getChildrenUnmodifiable();
@@ -124,9 +120,22 @@ public class Controller {
             Node node = iterator.next();
             String id = node.getId();
             if ( searchedId.equals(id) ){
-                return  (TextArea) node;
+                return node;
             }
         }
         return null;//not found
     }
+
+    private TextArea getTextArea(ActionEvent actionEvent, String searchedId){
+        Node node = getNodeById(actionEvent, searchedId);
+        if ( node instanceof TextArea ) return  (TextArea) node;
+        throw new RuntimeException("not instance of textArea");
+    }
+
+    private TextField getTextField(ActionEvent actionEvent, String searchedId){
+        Node node = getNodeById(actionEvent, searchedId);
+        if ( node instanceof TextField ) return  (TextField) node;
+        throw new RuntimeException("not instance of textField");
+    }
+
 }

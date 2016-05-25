@@ -37,9 +37,11 @@ public class ChangeCurveNames implements QueryGenerator{
     private static final int CHANGE_TO = 1;
     private static final int WHERE_CURVE_LIKE = 2;
 
-    public static String getQuery(String loadsetId, String input) throws IOException {
+    public static String getQuery(Input input) throws IOException {
+        String loadsetId=input.getLoadsetId();
+        String csvString = input.getCsv();
         StringBuilder queryBuilder = new StringBuilder(QUERY_START.replace("%LOADSET_ID%", loadsetId));
-        CSVParser csv = AdjustedCSVParser.getCsv(input);
+        CSVParser csv = AdjustedCSVParser.getCsv(csvString);
         List<CSVRecord> records = csv.getRecords();
         for ( CSVRecord record : records ) {
             appendUpdateStatement(queryBuilder, record.get(CHANGE_FROM), record.get(CHANGE_TO), record.get(WHERE_CURVE_LIKE));
