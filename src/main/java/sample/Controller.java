@@ -11,65 +11,56 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import logic.ChangeCurveNames;
-import logic.QueryGenerator;
+import logic.MoveDataNoDuplicates;
+import logic.UpdateInfoInApex;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 public class Controller {
     public TextField loadsetIdTextField;
     public TextArea outputTextArea;
     public TextArea inputTextArea;
-    public AnchorPane anchorPaneChangeCurveNames;
-    public Button goToChangeCurveNamesBtn;
-    public Button goToMenuBtn;
 
     public void generateQuery(ActionEvent actionEvent) throws IOException {
-        Button source = (Button) actionEvent.getSource();
-        Scene scene = source.getScene();
+        Button button = (Button) actionEvent.getSource();
+        Parent parent = button.getParent();
+        String anchorId = parent.getId();
 
-        Parent root = scene.getRoot();
-        ObservableList<Node> childrenUnmodifiable = root.getChildrenUnmodifiable();
-        for ( Node node : childrenUnmodifiable ) {
-            System.out.println("Id: " + node.getId());
-            if ( node.getId().equals("title") ){
 
+        if ( anchorId.equals("anchorPaneChangeCurveNames") ){
+            String loadsetIdString = loadsetIdTextField.getText().trim();
+            if ( !validateLoadsetId(loadsetIdString) ) {
+                outputTextArea.setText("loadset id mustn't contain anything except digits");
+                return;
             }
+            String input = inputTextArea.getText();
+            System.out.println(input);
+            System.out.println();
+            boolean b = input.matches(".*?,.*?,.*");
+            System.out.println(b+"sd");
+            String output = ChangeCurveNames.getQuery(loadsetIdString, input);
+
+            outputTextArea.setText(output);
+        }else if (  anchorId.equals("anchorPaneMoveDataNoDuplicates") ){
+            TextArea inputArea = getElementById(actionEvent, "inputTextArea");
+            String input = inputArea.getText();
+            String output = MoveDataNoDuplicates.getQuery(input);
+
+            TextArea outputArea = getElementById(actionEvent, "outputTextArea");
+            outputArea.setText(output);
+
+
+        }else if (  anchorId.equals("anchorPaneUpdateInfoInApex") ){
+            TextArea inputArea = getElementById(actionEvent, "inputTextArea");
+            String input = inputArea.getText();
+            String output = UpdateInfoInApex.getQuery(input);
+
+            TextArea outputArea = getElementById(actionEvent, "outputTextArea");
+            outputArea.setText(output);
         }
-
-
-        /*ObservableList<Node> children = anchorPaneChangeCurveNames.getChildren();
-        for ( Node node : children ) {
-            System.out.println("Id: " + node.getId());
-            if (node instanceof TextField || node instanceof TextArea) {
-                // clear
-                ((TextField)node).setText("");
-            }
-        }
-        //Class<QueryGenerator> qg = ChangeCurveNames.class.cast(QueryGenerator);
-
-
-*/
-        if (1>0) return;
-        String loadsetIdString = loadsetIdTextField.getText().trim();
-        if ( !validateLoadsetId(loadsetIdString) ) {
-            outputTextArea.setText("loadset id mustn't contain anything except digits");
-            return;
-        }
-        String input = inputTextArea.getText();
-        System.out.println(input);
-        System.out.println();
-        boolean b = input.matches(".*?,.*?,.*");
-        System.out.println(b+"sd");
-        String output = ChangeCurveNames.getQuery(loadsetIdString, input);
-
-        outputTextArea.setText(output);
-    }
-
-    public void call(QueryGenerator c){
-
     }
 
     private boolean validateLoadsetId(String loadsetId) {
@@ -77,29 +68,65 @@ public class Controller {
     }
 
     public void copyToClipboard(ActionEvent actionEvent) {
-        final Clipboard clipboard = Clipboard.getSystemClipboard();
-        final ClipboardContent content = new ClipboardContent();
-        content.putString(outputTextArea.getText());
-        clipboard.setContent(content);
+        Button button = (Button) actionEvent.getSource();
+        Parent parent = button.getParent();
+        ObservableList<Node> childrenUnmodifiable = parent.getChildrenUnmodifiable();
+        Iterator<Node> iterator = childrenUnmodifiable.iterator();
+        while ( iterator.hasNext() ){
+            Node node = iterator.next();
+            String id = node.getId();
+            if ( "outputTextArea".equals(id) ){
+                TextArea area = (TextArea) node;
+                String output = area.getText();
+                final Clipboard clipboard = Clipboard.getSystemClipboard();
+                final ClipboardContent content = new ClipboardContent();
+                content.putString(output);
+                clipboard.setContent(content);
+                return;
+            }
+        }
     }
 
     public void goToChangeCurveNames(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/changeCurveNames.fxml"));
-        Scene scene = new Scene(root);
-        Stage stage = (Stage) goToChangeCurveNamesBtn.getScene().getWindow();
-        stage.setScene(scene);
-        stage.show();
+        switchSceneToRoot(actionEvent, root);
     }
 
-    public void goToMoveDataBtn(ActionEvent actionEvent) {
+    public void goToMoveDataBtn(ActionEvent actionEvent) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/moveDataNoDuplicates.fxml"));
+        switchSceneToRoot(actionEvent, root);
+    }
 
+    public void goToUpdateInfoInApex(ActionEvent actionEvent) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/updateInfoInApex.fxml"));
+        switchSceneToRoot(actionEvent, root);
     }
 
     public void goToMenu(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/menu.fxml"));
+        switchSceneToRoot(actionEvent, root);
+    }
+
+    private void switchSceneToRoot(ActionEvent actionEvent, Parent root) {
         Scene scene = new Scene(root);
-        Stage stage = (Stage) goToMenuBtn.getScene().getWindow();
+        Button button = (Button) actionEvent.getSource();
+        Stage stage = (Stage) button.getScene().getWindow();
         stage.setScene(scene);
         stage.show();
+    }
+
+    public TextArea getElementById(ActionEvent actionEvent, String searchedId) {
+        Button button = (Button) actionEvent.getSource();
+        Parent parent = button.getParent();
+        ObservableList<Node> childrenUnmodifiable = parent.getChildrenUnmodifiable();
+        Iterator<Node> iterator = childrenUnmodifiable.iterator();
+        while ( iterator.hasNext() ){
+            Node node = iterator.next();
+            String id = node.getId();
+            if ( searchedId.equals(id) ){
+                return  (TextArea) node;
+            }
+        }
+        return null;//not found
     }
 }

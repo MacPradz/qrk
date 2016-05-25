@@ -1,8 +1,8 @@
 package logic;
 
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import utils.AdjustedCSVParser;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,7 +39,7 @@ public class ChangeCurveNames implements QueryGenerator{
 
     public static String getQuery(String loadsetId, String input) throws IOException {
         StringBuilder queryBuilder = new StringBuilder(QUERY_START.replace("%LOADSET_ID%", loadsetId));
-        CSVParser csv = getCsv(input);
+        CSVParser csv = AdjustedCSVParser.getCsv(input);
         List<CSVRecord> records = csv.getRecords();
         for ( CSVRecord record : records ) {
             appendUpdateStatement(queryBuilder, record.get(CHANGE_FROM), record.get(CHANGE_TO), record.get(WHERE_CURVE_LIKE));
@@ -58,12 +58,6 @@ public class ChangeCurveNames implements QueryGenerator{
         queryBuilder.append("--UPDATE from: " + fromString + " to: " + toString + " where curve like: " + whereLike + "'\n");
         queryBuilder.append(String.format(DW_CURVE_UPDATE, fromString, toString, whereLike) + "\n");
         queryBuilder.append(String.format(LOAD_SET2_CURVE_UPDATE, fromString, toString, whereLike) + "\n");
-    }
-
-    private static CSVParser getCsv(String input) throws IOException {
-        CSVFormat format = CSVFormat.DEFAULT
-                .withIgnoreSurroundingSpaces();
-        return CSVParser.parse(input, format);
     }
 
     @Override
