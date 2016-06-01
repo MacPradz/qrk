@@ -12,10 +12,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.stage.Stage;
-import logic.ChangeCurveNames;
+import logic.Factory;
+import logic.QueryGenerator;
 import logic.Input;
-import logic.MoveDataNoDuplicates;
-import logic.UpdateInfoInApex;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -23,55 +22,51 @@ import java.util.Iterator;
 public class Controller {
 
     public void generateQuery(ActionEvent actionEvent) throws IOException {
-        Button button = (Button) actionEvent.getSource();
-        Parent parent = button.getParent();
+        Parent parent = getParentFromButtonAction(actionEvent);
         String anchorId = parent.getId();
+        TextArea outputArea = getTextArea(actionEvent, "outputTextArea");
 
-        if ( anchorId.equals("anchorPaneChangeCurveNames") ){
-            TextField loadsetIdText = getTextField(actionEvent, "loadsetIdTextField");
+        Input input = getInput(actionEvent);
 
-            String loadsetIdString = loadsetIdText.getText().trim();
-            TextArea outputArea = getTextArea(actionEvent, "outputTextArea");
-
-            TextArea inputArea = getTextArea(actionEvent, "inputTextArea");
-            String inputCsv = inputArea.getText();
-            Input input = new Input(inputCsv);
-            input.setLoadsetId(loadsetIdString);
-            String output = ChangeCurveNames.getQuery(input);
-
-            outputArea.setText(output);
-
-
-        }else if (  anchorId.equals("anchorPaneMoveDataNoDuplicates") ){
-            TextArea inputArea = getTextArea(actionEvent, "inputTextArea");
-            String inputCsv = inputArea.getText();
-            Input input = new Input(inputCsv);
-            String output = MoveDataNoDuplicates.getQuery(input);
-
-            TextArea outputArea = getTextArea(actionEvent, "outputTextArea");
-            outputArea.setText(output);
-
-
-        }else if (  anchorId.equals("anchorPaneUpdateInfoInApex") ){
-            TextArea inputArea = getTextArea(actionEvent, "inputTextArea");
-            String inputCsv = inputArea.getText();
-            Input input = new Input(inputCsv);
-            String output = UpdateInfoInApex.getQuery(input);
-
-            TextArea outputArea = getTextArea(actionEvent, "outputTextArea");
-            outputArea.setText(output);
+        QueryGenerator queryGenerator = Factory.createQueryGenerator(anchorId);
+        if ( queryGenerator == null ) outputArea.setText("unknown query");
+        try{
+            queryGenerator.validateInputData(input);
+        }catch ( IllegalArgumentException iae ){
+            outputArea.setText(iae.getMessage());
+            return;
         }
+        String output = queryGenerator.getQuery(input);
+
+        outputArea.setText(output);
+    }
+
+    private Input getInput(ActionEvent actionEvent) {
+        TextArea inputArea = getTextArea(actionEvent, "inputTextArea");
+        String inputCsv = inputArea.getText();
+        Input input = new Input(inputCsv);
+
+        TextField loadsetIdText = getTextField(actionEvent, "loadsetIdTextField");
+        if ( loadsetIdText != null ) {
+            String loadsetIdString = loadsetIdText.getText().trim();
+            input.setLoadsetId(loadsetIdString);
+        }
+        return input;
+    }
+
+    private Parent getParentFromButtonAction(ActionEvent actionEvent) {
+        Button button = (Button) actionEvent.getSource();
+        return button.getParent();
     }
 
     public void copyToClipboard(ActionEvent actionEvent) {
-        Button button = (Button) actionEvent.getSource();
-        Parent parent = button.getParent();
+        Parent parent = getParentFromButtonAction(actionEvent);
         ObservableList<Node> childrenUnmodifiable = parent.getChildrenUnmodifiable();
         Iterator<Node> iterator = childrenUnmodifiable.iterator();
-        while ( iterator.hasNext() ){
+        while ( iterator.hasNext() ) {
             Node node = iterator.next();
             String id = node.getId();
-            if ( "outputTextArea".equals(id) ){
+            if ( "outputTextArea".equals(id) ) {
                 TextArea area = (TextArea) node;
                 String output = area.getText();
                 final Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -112,30 +107,29 @@ public class Controller {
     }
 
     private Node getNodeById(ActionEvent actionEvent, String searchedId) {
-        Button button = (Button) actionEvent.getSource();
-        Parent parent = button.getParent();
+        Parent parent = getParentFromButtonAction(actionEvent);
         ObservableList<Node> childrenUnmodifiable = parent.getChildrenUnmodifiable();
         Iterator<Node> iterator = childrenUnmodifiable.iterator();
-        while ( iterator.hasNext() ){
+        while ( iterator.hasNext() ) {
             Node node = iterator.next();
             String id = node.getId();
-            if ( searchedId.equals(id) ){
+            if ( searchedId.equals(id) ) {
                 return node;
             }
         }
         return null;//not found
     }
 
-    private TextArea getTextArea(ActionEvent actionEvent, String searchedId){
+    private TextArea getTextArea(ActionEvent actionEvent, String searchedId) {
         Node node = getNodeById(actionEvent, searchedId);
-        if ( node instanceof TextArea ) return  (TextArea) node;
+        if ( node instanceof TextArea ) return (TextArea) node;
         throw new RuntimeException("not instance of textArea");
     }
 
-    private TextField getTextField(ActionEvent actionEvent, String searchedId){
+    private TextField getTextField(ActionEvent actionEvent, String searchedId) {
         Node node = getNodeById(actionEvent, searchedId);
-        if ( node instanceof TextField ) return  (TextField) node;
-        throw new RuntimeException("not instance of textField");
+        if ( node instanceof TextField ) return (TextField) node;
+        return null;
     }
 
 }

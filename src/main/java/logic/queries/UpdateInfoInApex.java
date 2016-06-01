@@ -1,5 +1,7 @@
-package logic;
+package logic.queries;
 
+import logic.Input;
+import logic.QueryGenerator;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import utils.AdjustedCSVParser;
@@ -12,20 +14,26 @@ import java.util.regex.Pattern;
 /**
  * Created by uc198829 on 24/5/2016.
  */
-public class UpdateInfoInApex{
+public class UpdateInfoInApex implements QueryGenerator{
     private static final String QUERY = "exec dw.pkg_curve_maintenance.update_curve_info(%CURVE_TO_UPDATE%);\n";
 
-    public static String getQuery(Input input) throws IOException {
+    public String getQuery(Input input) throws IOException {
         String csvString = input.getCsv();
         StringBuilder queryBuilder = new StringBuilder("");
         CSVParser csv = AdjustedCSVParser.getCsv(csvString);
         List<CSVRecord> records = csv.getRecords();
         for ( CSVRecord record : records ) {
             for ( String curveToBeUpdated : record ) {
+                if ( "".equals(curveToBeUpdated) ) continue;
                 queryBuilder.append(QUERY.replaceAll("%CURVE_TO_UPDATE%", curveToBeUpdated));
             }
         }
-        return queryBuilder.toString();
+        return queryBuilder.toString().trim();
+    }
+
+    @Override
+    public void validateInputData(Input input) {
+        return ;
     }
 
     public static String getQuery(List<String> list) throws IOException {
@@ -33,11 +41,11 @@ public class UpdateInfoInApex{
         for ( String curveToBeUpdated : list ) {
             queryBuilder.append(QUERY.replaceAll("%CURVE_TO_UPDATE%", curveToBeUpdated));
         }
-        return queryBuilder.toString();
+        return queryBuilder.toString().trim();
     }
 
     public static boolean validateInputData(String input) {
-        String regex = "^(( *\\d+( *, *\\d+ *)*,? *($|\\n))+)";
+        String regex = "\\A(( *\\d+( *, *\\d+ *)*,? *($|\\n))+)\\z";
         Pattern pattern = Pattern.compile(regex,Pattern.DOTALL);
         Matcher matcher = pattern.matcher(input);
         return matcher.find();

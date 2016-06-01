@@ -11,15 +11,19 @@ public class Input {
         this.csv = csv;
     }
 
+    public void setCsv(String csv) {
+        this.csv = csv;
+    }
+
     public void setLoadsetId(String loadsetId) {
         this.loadsetId = loadsetId;
     }
 
     public String getLoadsetId() {
-        return loadsetId;
+        return loadsetId.trim();
     }
 
     public String getCsv() {
-        return csv;
+        return csv.trim();
     }
 }

@@ -1,16 +1,22 @@
-package logic;
+package logic.queries;
 
+import logic.Input;
+import logic.exceptions.InvalidInputException;
+import logic.exceptions.InvalidLoadsetIdException;
+import logic.QueryGenerator;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import utils.AdjustedCSVParser;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by uc198829 on 10/5/2016.
  */
-public class ChangeCurveNames implements QueryGenerator{
+public class ChangeCurveNames implements QueryGenerator {
     private static final String DW_CURVE_UPDATE = "UPDATE dw.curve SET name = REGEXP_REPLACE(name, '%s', '%s') WHERE name LIKE '%s' AND id = oldRow.curve_id;";
     private static final String LOAD_SET2_CURVE_UPDATE = "UPDATE load_set2_curve SET external_id = REGEXP_REPLACE(external_id, '%s', '%s') WHERE external_id LIKE '%s' AND curve_id = oldRow.curve_id;";
     private static final String DW_CURVE_REMOVE = "DELETE dw.curve WHERE name LIKE '%s';";
@@ -37,8 +43,8 @@ public class ChangeCurveNames implements QueryGenerator{
     private static final int CHANGE_TO = 1;
     private static final int WHERE_CURVE_LIKE = 2;
 
-    public static String getQuery(Input input) throws IOException {
-        String loadsetId=input.getLoadsetId();
+    public String getQuery(Input input) throws IOException {
+        String loadsetId = input.getLoadsetId();
         String csvString = input.getCsv();
         StringBuilder queryBuilder = new StringBuilder(QUERY_START.replace("%LOADSET_ID%", loadsetId));
         CSVParser csv = AdjustedCSVParser.getCsv(csvString);
@@ -47,7 +53,7 @@ public class ChangeCurveNames implements QueryGenerator{
             appendUpdateStatement(queryBuilder, record.get(CHANGE_FROM), record.get(CHANGE_TO), record.get(WHERE_CURVE_LIKE));
             appendRemoveStatement(queryBuilder, record.get(WHERE_CURVE_LIKE));
         }
-        return queryBuilder.append(QUERY_END).toString();
+        return queryBuilder.append(QUERY_END).toString().trim();
     }
 
     private static void appendRemoveStatement(StringBuilder queryBuilder, String whereLike) {
@@ -63,12 +69,21 @@ public class ChangeCurveNames implements QueryGenerator{
     }
 
     @Override
-    public String getQuery() {
-        return null;
+    public void validateInputData(Input input) {
+        String loadsetId = input.getLoadsetId();
+        if ( loadsetId == null || !loadsetId.matches(" *\\d+ *") ) {
+            throw new InvalidLoadsetIdException();
+        }
+        if ( !validateCsv(input.getCsv()) ) {
+            throw new InvalidInputException("each row of inserted input should contain exactly three elements separated by comma");
+        }
     }
 
-    @Override
-    public boolean validateInputData() {
-        return false;
+    private static boolean validateCsv(String input) {
+        if ( input==null ) return false;
+        String regex = "\\A( *[^,\\s]+ *, *[^,\\s]+ *, *[^,\\s]+,? *,? *($|\\n))+\\z";
+        Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(input);
+        return matcher.find();
     }
 }

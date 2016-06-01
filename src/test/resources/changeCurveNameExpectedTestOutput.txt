@@ -2,7 +2,7 @@ DECLARE
     v_code  NUMBER;
     v_errm  VARCHAR2(255);
 BEGIN
-FOR oldRow IN ( SELECT curve_id FROM load_set2_curve WHERE load_set_id = 12384) LOOP
+FOR oldRow IN ( SELECT curve_id FROM load_set2_curve WHERE load_set_id = 36153) LOOP
 BEGIN
     DBMS_OUTPUT.PUT_LINE ( '---' ||oldRow.curve_id);
  -- DBMS_OUTPUT.PUT_LINE('Renaming curve for id=' ||oldRow||);
