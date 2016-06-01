@@ -3,7 +3,7 @@ package logic.queries;
 import logic.Input;
 import logic.exceptions.InvalidInputException;
 import logic.exceptions.InvalidLoadsetIdException;
-import logic.QueryGenerator;
+import logic.QueryGeneratorI;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,7 +13,7 @@ import java.nio.file.Files;
 import static org.junit.Assert.*;
 
 public class ChangeCurveNamesTest {
-    private QueryGenerator queryGenerator;
+    private QueryGeneratorI queryGenerator;
     private Input getQueryInput;
     private Input loadsetIdInput;
     private Input csvInput;

@@ -2,7 +2,7 @@ package logic.queries;
 
 import logic.Input;
 import logic.exceptions.InvalidInputException;
-import logic.QueryGenerator;
+import logic.QueryGeneratorI;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import utils.AdjustedCSVParser;
@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 /**
  * Created by uc198829 on 23/5/2016.
  */
-public class MoveDataNoDuplicates implements QueryGenerator{
+public class MoveDataNoDuplicates implements QueryGeneratorI {
     private static final String QUERY =
             "insert into curve_data (curve_id, forecast_date, value_date, local_forecast_date, local_value_date, value, changed_date)\n" +
                     "select  %CURVE_TO%, forecast_date, value_date, local_forecast_date, local_value_date, value, sysdate --where to\n" +

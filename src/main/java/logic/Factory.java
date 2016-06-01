@@ -9,7 +9,7 @@ import logic.queries.UpdateInfoInApex;
  */
 public class Factory {
 
-    public static QueryGenerator createQueryGenerator(String anchorPaneName){
+    public static QueryGeneratorI createQueryGenerator(String anchorPaneName){
         if ( anchorPaneName.equals("anchorPaneChangeCurveNames") ){
             return createChangeCurveNameQuery();
         }else if (  anchorPaneName.equals("anchorPaneMoveDataNoDuplicates") ){
@@ -20,19 +20,19 @@ public class Factory {
         return null;
     }
 
-    private static QueryGenerator createChangeCurveNameQuery(){
+    private static QueryGeneratorI createChangeCurveNameQuery(){
         return setupQuery(ChangeCurveNames.class);
     }
 
-    private static QueryGenerator createMoveDataNoDuplicates(){
+    private static QueryGeneratorI createMoveDataNoDuplicates(){
         return setupQuery(MoveDataNoDuplicates.class);
     }
 
-    private static QueryGenerator createUpdateInfoInApex(){
+    private static QueryGeneratorI createUpdateInfoInApex(){
         return setupQuery(UpdateInfoInApex.class);
     }
 
-    private static <T extends QueryGenerator> T setupQuery(Class<T> queryClass) {
+    private static <T extends QueryGeneratorI> T setupQuery(Class<T> queryClass) {
         try {
             T query = queryClass.newInstance();
             return query;

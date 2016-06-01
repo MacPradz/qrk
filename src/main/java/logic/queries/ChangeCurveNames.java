@@ -3,7 +3,7 @@ package logic.queries;
 import logic.Input;
 import logic.exceptions.InvalidInputException;
 import logic.exceptions.InvalidLoadsetIdException;
-import logic.QueryGenerator;
+import logic.QueryGeneratorI;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import utils.AdjustedCSVParser;
@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 /**
  * Created by uc198829 on 10/5/2016.
  */
-public class ChangeCurveNames implements QueryGenerator {
+public class ChangeCurveNames implements QueryGeneratorI {
     private static final String DW_CURVE_UPDATE = "UPDATE dw.curve SET name = REGEXP_REPLACE(name, '%s', '%s') WHERE name LIKE '%s' AND id = oldRow.curve_id;";
     private static final String LOAD_SET2_CURVE_UPDATE = "UPDATE load_set2_curve SET external_id = REGEXP_REPLACE(external_id, '%s', '%s') WHERE external_id LIKE '%s' AND curve_id = oldRow.curve_id;";
     private static final String DW_CURVE_REMOVE = "DELETE dw.curve WHERE name LIKE '%s';";

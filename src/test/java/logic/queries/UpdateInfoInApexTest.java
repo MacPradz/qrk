@@ -3,7 +3,8 @@ package logic.queries;
 import static org.junit.Assert.assertEquals;
 
 import logic.Input;
-import logic.QueryGenerator;
+import logic.QueryGeneratorI;
+import logic.exceptions.InvalidInputException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,7 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class UpdateInfoInApexTest {
-    private QueryGenerator queryGenerator;
+    private QueryGeneratorI queryGenerator;
     private static final String expected = "exec dw.pkg_curve_maintenance.update_curve_info(123);\n" +
             "exec dw.pkg_curve_maintenance.update_curve_info(456);\n" +
             "exec dw.pkg_curve_maintenance.update_curve_info(567);\n" +
@@ -41,34 +42,23 @@ public class UpdateInfoInApexTest {
     @Test
     public void testGetQueryList() throws Exception {
         List<String> testInput = new LinkedList<>();
-        testInput.add("123");
-        testInput.add("456");
-        testInput.add("567");
+        testInput.add(" 123");
+        testInput.add("456 ");
+        testInput.add(" 567 ");
         testInput.add("678");
         String query = UpdateInfoInApex.getQuery(testInput);
         assertEquals(expected, query);
     }
 
-    @Test
-    public void testValidateInputData() throws Exception {
-        LinkedList<String> list = new LinkedList<String>() {
-            {
-                add(" 1 , 2 ,3,4, ");
-                add(" 1 , 2 ,3,4, \n2, 3,5,6 ");
-                add("1,2,wer,werwr,3");
-                add("1,2,wer,werwr,");
-                add(" 1,\n1,2,wer,werwr;");
-                add("1 , 2 , wer,werwr;");
-            }
-        };
+    @Test(expected = InvalidInputException.class)
+    public void testValidateInputDataCsvEmpty() throws Exception {
+        Input input = new Input("");
+        queryGenerator.validateInputData(input);
+    }
 
-        for ( String s : list ) {
-            System.out.println();
-            if ( UpdateInfoInApex.validateInputData(s) ) {
-
-            } else {
-                System.out.println("no success " + s);
-            }
-        }
+    @Test(expected = InvalidInputException.class)
+    public void testValidateInputDataCsvWithLetters() throws Exception {
+        Input input = new Input("123,234a");
+        queryGenerator.validateInputData(input);
     }
 }

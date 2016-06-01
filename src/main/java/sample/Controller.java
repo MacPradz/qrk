@@ -13,7 +13,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.stage.Stage;
 import logic.Factory;
-import logic.QueryGenerator;
+import logic.QueryGeneratorI;
 import logic.Input;
 
 import java.io.IOException;
@@ -28,8 +28,8 @@ public class Controller {
 
         Input input = getInput(actionEvent);
 
-        QueryGenerator queryGenerator = Factory.createQueryGenerator(anchorId);
-        if ( queryGenerator == null ) outputArea.setText("unknown query");
+        QueryGeneratorI queryGenerator = Factory.createQueryGenerator(anchorId);
+        if ( queryGenerator == null ) outputArea.setText("unknown query selected");
         try{
             queryGenerator.validateInputData(input);
         }catch ( IllegalArgumentException iae ){
