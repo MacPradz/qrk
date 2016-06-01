@@ -11,7 +11,7 @@
       <Button fx:id="generateQueryBtn" layoutX="78.0" layoutY="294.0" mnemonicParsing="false" onAction="#generateQuery" text="generate query" />
       <TextArea fx:id="inputTextArea" layoutX="14.0" layoutY="93.0" prefHeight="188.0" prefWidth="622.0" promptText="MOVE FROM , MOVE TO&#10;&#13;103946249, 106506606&#10;&#13;103946250, 106506607" />
       <TextArea fx:id="outputTextArea" layoutX="14.0" layoutY="327.0" prefHeight="312.0" prefWidth="622.0" promptText="OUTPUT" />
-      <Label fx:id="title" layoutX="186.0" layoutY="6.0" prefHeight="57.0" prefWidth="279.0" text="Moving data from one curve &#10;to another without creating duplicates" textAlignment="CENTER" underline="true" AnchorPane.bottomAnchor="587.0">
+      <Label fx:id="title" layoutX="186.0" prefHeight="57.0" prefWidth="279.0" text="Moving data from one curve &#10;to another without creating duplicates" textAlignment="CENTER" underline="true" AnchorPane.topAnchor="0.0">
          <font>
             <Font size="16.0" />
          </font>
@@ -21,7 +21,7 @@
             <Font size="20.0" />
          </font></Label>
       <Button fx:id="copyToClipboardBtn" layoutX="447.0" layoutY="294.0" mnemonicParsing="false" onAction="#copyToClipboard" text="Copy output to clipboard" />
-      <Label layoutX="14.0" layoutY="63.0" prefHeight="30.0" prefWidth="323.0" text="Insert comma separated input data:" wrapText="true">
+      <Label layoutX="14.0" layoutY="53.0" prefHeight="40.0" prefWidth="323.0" text="Insert comma separated input data:&#10;move from ID , move to ID" wrapText="true">
          <font>
             <Font size="14.0" />
          </font></Label>
