@@ -81,7 +81,7 @@ public class ChangeCurveNames implements QueryGeneratorI {
 
     private static boolean validateCsv(String input) {
         if ( input==null ) return false;
-        String regex = "\\A( *[^,\\s]+ *, *[^,\\s]+ *, *[^,\\s]+,? *,? *($|\\n))+\\z";
+        String regex = "\\A( *([^,\\s]| )+ *, *([^,\\s]| )+ *, *([^,\\s]| )+,? *,? *($|\\n))+\\z";
         Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
         Matcher matcher = pattern.matcher(input);
         return matcher.find();

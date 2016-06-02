@@ -25,7 +25,7 @@ public class ChangeCurveNamesTest {
 
     @Before
     public void setInput() {
-        String testInput = "ctr.long , LgT.LNG , %ctr.long%\nctr.short , ShT.LNG , %ctr.short%";
+        String testInput = "ctr.long , LgT.LNG A , %ctr.long%\nctr.short , ShT.LNG , %ctr.short%";
         getQueryInput = new Input(testInput);
         getQueryInput.setLoadsetId("  36153  ");
 
